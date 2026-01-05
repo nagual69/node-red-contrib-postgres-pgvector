@@ -1,6 +1,6 @@
 # Documentation Index
 
-Complete guide to all documentation for @nagual69/node-red-pgvector v1.0.0
+Complete guide to all documentation for node-red-contrib-postgres-pgvector v1.0.0
 
 ## 📚 Main Documentation
 

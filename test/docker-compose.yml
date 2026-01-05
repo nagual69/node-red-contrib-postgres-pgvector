@@ -28,17 +28,17 @@ services:
       - "1880:1880"
     volumes:
       - nodered_data:/data
-      - ../:/usr/src/node-red-pgvector
+      - ../:/usr/src/node-red-contrib-postgres-pgvector
     depends_on:
       postgres:
         condition: service_healthy
     command: >
       sh -c "
-        cd /usr/src/node-red-pgvector &&
+        cd /usr/src/node-red-contrib-postgres-pgvector &&
         npm install &&
         npm link &&
         cd /data &&
-        npm link @nagual69/node-red-pgvector &&
+        npm link node-red-contrib-postgres-pgvector &&
         npm start
       "
 

@@ -1,8 +1,8 @@
-# @nagual69/node-red-pgvector - Complete Package Summary
+# node-red-contrib-postgres-pgvector - Complete Package Summary
 
 ## Overview
 
-**@nagual69/node-red-pgvector** is a production-ready Node-RED package for PostgreSQL vector operations using the pgvector extension. It provides 7 nodes for managing vector embeddings, performing similarity search, and scaling semantic applications.
+**node-red-contrib-postgres-pgvector** is a production-ready Node-RED package for PostgreSQL vector operations using the pgvector extension. It provides 7 nodes for managing vector embeddings, performing similarity search, and scaling semantic applications.
 
 **Status:** ✅ Version 1.0.0 - Fully tested and ready for publication
 
@@ -12,7 +12,7 @@
 
 ### Core Files
 - `pgvector.js` - Node registration entry point
-- `package.json` - NPM manifest with @nagual69 scoping
+- `package.json` - NPM manifest
 - `index.d.ts` - TypeScript type definitions
 - `LICENSE` - MIT license
 - `.gitignore` - Comprehensive git ignore rules
@@ -184,7 +184,7 @@ inner-product/ip → vector_ip_ops
 
 ### ✅ Package Standards
 - [x] MIT LICENSE file present
-- [x] Scoped package name: `@nagual69/node-red-pgvector`
+- [x] Package name: `node-red-contrib-postgres-pgvector`
 - [x] package.json with author and repository fields
 - [x] node-red.version specified (≥2.0.0)
 - [x] Proper keywords including 'node-red'
@@ -246,7 +246,7 @@ All critical features work as demonstrated:
 
 ## Version Information
 
-- **Package:** @nagual69/node-red-pgvector
+- **Package:** node-red-contrib-postgres-pgvector
 - **Version:** 1.0.0
 - **License:** MIT
 - **Node-RED Minimum:** 2.0.0
@@ -258,7 +258,7 @@ All critical features work as demonstrated:
 
 ## Next Steps for Users
 
-1. **Install:** Search "node-red-pgvector" in Node-RED palette or `npm install @nagual69/node-red-pgvector`
+1. **Install:** Search "node-red-contrib-postgres-pgvector" in Node-RED palette or `npm install node-red-contrib-postgres-pgvector`
 2. **Setup:** Import example flows from [examples/](examples/)
 3. **Configure:** Set PostgreSQL credentials in pgvector-config
 4. **Deploy:** Use as building blocks for vector applications

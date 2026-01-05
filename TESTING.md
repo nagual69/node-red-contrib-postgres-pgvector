@@ -1,4 +1,4 @@
-# Testing Guide for @nagual69/node-red-pgvector
+# Testing Guide for node-red-contrib-postgres-pgvector
 
 Comprehensive testing and validation procedures for the pgvector package.
 
@@ -55,7 +55,7 @@ If not using Docker:
 4. **Install Node-RED**
    ```bash
    npm install -g node-red
-   npm install -g @nagual69/node-red-pgvector
+   npm install -g node-red-contrib-postgres-pgvector
    ```
 
 5. **Start Node-RED**

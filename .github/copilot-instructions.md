@@ -133,7 +133,7 @@ Example from [nodes/pgvector-search.html](nodes/pgvector-search.html#L73-L127):
 npm install
 npm link
 cd ~/.node-red  # or C:\Users\username\.node-red on Windows
-npm link @nagual69/node-red-pgvector
+npm link node-red-contrib-postgres-pgvector
 ```
 
 Restart Node-RED to load the module. Import [examples/basic-flows.json](examples/basic-flows.json) for testing.

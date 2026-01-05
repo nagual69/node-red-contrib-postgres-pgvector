@@ -1,4 +1,4 @@
-# Quick Start Guide - @nagual69/node-red-pgvector
+# Quick Start Guide - node-red-contrib-postgres-pgvector
 
 Get started with pgvector in Node-RED in **5 minutes**.
 
@@ -8,13 +8,13 @@ Get started with pgvector in Node-RED in **5 minutes**.
 1. Open Node-RED
 2. Click Menu (☰) → Manage palette
 3. Search for `pgvector`
-4. Click Install on `@nagual69/node-red-pgvector`
+4. Click Install on `node-red-contrib-postgres-pgvector`
 5. Restart Node-RED
 
 ### Option B: npm
 ```bash
 npm install -g node-red
-npm install @nagual69/node-red-pgvector
+npm install node-red-contrib-postgres-pgvector
 node-red
 ```
 
@@ -22,7 +22,7 @@ node-red
 
 ### Using Docker (Recommended)
 ```bash
-cd node_modules/@nagual69/node-red-pgvector/test
+cd node_modules/node-red-contrib-postgres-pgvector/test
 docker-compose up -d
 ```
 
@@ -41,7 +41,7 @@ Wait 10 seconds for services to start, then open http://localhost:1880
 1. In Node-RED, click Menu (☰) → Import
 2. Paste this URL or copy the flow file:
    ```
-   ~/.npm/_npx/[version]/lib/node_modules/@nagual69/node-red-pgvector/examples/sample-flows.json
+   ~/.npm/_npx/[version]/lib/node_modules/node-red-contrib-postgres-pgvector/examples/sample-flows.json
    ```
 3. Click Import
 4. Click "1. Setup Database" tab
@@ -97,9 +97,9 @@ Replace sample vectors with real embeddings from:
 4. Build UI with Node-RED dashboard nodes
 
 ### 3. Learn More
-- **Full Docs:** [README.md](node_modules/@nagual69/node-red-pgvector/README.md)
-- **Example Walkthroughs:** [examples/README.md](node_modules/@nagual69/node-red-pgvector/examples/README.md)
-- **Testing Guide:** [TESTING.md](node_modules/@nagual69/node-red-pgvector/TESTING.md)
+- **Full Docs:** [README.md](node_modules/node-red-contrib-postgres-pgvector/README.md)
+- **Example Walkthroughs:** [examples/README.md](node_modules/node-red-contrib-postgres-pgvector/examples/README.md)
+- **Testing Guide:** [TESTING.md](node_modules/node-red-contrib-postgres-pgvector/TESTING.md)
 - **pgvector Docs:** https://github.com/pgvector/pgvector
 
 ---

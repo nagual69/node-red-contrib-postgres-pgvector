@@ -1,6 +1,8 @@
 # Node-RED pgvector Example Flows
 
-This directory contains ready-to-import Node-RED flows demonstrating all pgvector node capabilities. Each flow is fully tested and production-ready.
+⚠️ These flows use example Docker credentials (`host: postgres`, `user: nodered`, `password: nodered123`) for local development only. Change them before using any external or shared database.
+
+This directory contains ready-to-import Node-RED flows demonstrating all pgvector node capabilities. The flows are validated in the local Docker setup; update credentials and harden configs for any non-local use.
 
 ## Quick Start
 
@@ -31,7 +33,7 @@ Initialize pgvector and create the articles table.
 4. Click "Create HNSW Index" button
 
 **Configuration:**
-- Uses Docker credentials: `postgres` host, user `nodered`, password `nodered123`
+- Uses Docker credentials: `postgres` host, user `nodered`, password `nodered123` (local dev only; change in any other environment)
 - Modify pgvector-config node if using different credentials
 
 #### Tab 2: "2. Insert Embeddings"
@@ -113,7 +115,7 @@ Demonstrates a complete end-to-end workflow with a `products` table.
 - Reference for category-filtered searches
 
 **Configuration:**
-- Uses Docker credentials
+- Uses Docker credentials (local dev only; change in any other environment)
 - Table: `products` with `name`, `category`, and `embedding` columns
 - Dimension: 384
 
