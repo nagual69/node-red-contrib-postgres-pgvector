@@ -1,0 +1,88 @@
+<script type="text/javascript">
+  RED.nodes.registerType('pgvector-insert', {
+    category: 'pgvector',
+    color: '#c2ffd0',
+    inputs: 1,
+    outputs: 1,
+    icon: 'arrow-in.svg',
+    defaults: {
+      name: { value: '' },
+      connection: { type: 'pgvector-config', required: true },
+      table: { value: '' },
+      column: { value: '' },
+      idColumn: { value: 'id' },
+      dimension: { value: '' },
+    },
+    label: function () {
+      return this.name || 'pgvector insert';
+    },
+  });
+</script>
+
+<script type="text/x-red" data-template-name="pgvector-insert">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection"><i class="fa fa-database"></i> Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-table"><i class="fa fa-table"></i> Table</label>
+    <input type="text" id="node-input-table" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-column"><i class="fa fa-bullseye"></i> Vector Column</label>
+    <input type="text" id="node-input-column" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-idColumn"><i class="fa fa-key"></i> ID Column</label>
+    <input type="text" id="node-input-idColumn" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-dimension"><i class="fa fa-arrows"></i> Dimension</label>
+    <input type="number" id="node-input-dimension" placeholder="Optional" />
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="pgvector-insert">
+  <p>Insert one or more records with vector embeddings into a PostgreSQL table.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">object | array</span></dt>
+    <dd>Single record or array of records to insert. Each must have a <code>vector</code> property.</dd>
+
+    <dt class="optional">table <span class="property-type">string</span></dt>
+    <dd>Override the configured table name</dd>
+
+    <dt class="optional">column <span class="property-type">string</span></dt>
+    <dd>Override the configured vector column name</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">array</span></dt>
+    <dd>Array of inserted records with their generated IDs</dd>
+  </dl>
+
+  <h3>Details</h3>
+  <p>Inserts records into the specified table. The <code>vector</code> field is stored in the vector column,
+  while all other fields are inserted as regular columns.</p>
+
+  <h3>Example</h3>
+  <pre>msg.payload = [
+  {
+    vector: [0.1, 0.2, 0.3],
+    title: "Document 1",
+    category: "tech"
+  },
+  {
+    vector: [0.4, 0.5, 0.6],
+    title: "Document 2",
+    category: "science"
+  }
+];
+return msg;</pre>
+</script>

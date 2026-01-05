@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Node-RED
+.node-red/
+.node-red-persist.json
+nodered_data/
+
+# Environment and credentials
+.env
+.env.local
+.env*.local
+credentials.json
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.vim/
+
+# Test and coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Docker and containers
+docker-compose.override.yml
+.docker/
+postgres_data/
+nodered_data/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build and distribution
+dist/
+build/
+.tsc/
+
+# OS files
+Thumbs.db
+.DS_Store
+*.swp
+
+# Temporary files
+tmp/
+temp/
+*.tmp

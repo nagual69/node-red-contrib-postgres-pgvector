@@ -1,0 +1,52 @@
+<script type="text/javascript">
+  RED.nodes.registerType('pgvector-upsert', {
+    category: 'pgvector',
+    color: '#d9c2ff',
+    inputs: 1,
+    outputs: 1,
+    icon: 'exchange.svg',
+    defaults: {
+      name: { value: '' },
+      connection: { type: 'pgvector-config', required: true },
+      table: { value: '' },
+      column: { value: '' },
+      idColumn: { value: 'id' },
+      dimension: { value: '' },
+    },
+    label: function () {
+      return this.name || 'pgvector upsert';
+    },
+  });
+</script>
+
+<script type="text/x-red" data-template-name="pgvector-upsert">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection"><i class="fa fa-database"></i> Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-table"><i class="fa fa-table"></i> Table</label>
+    <input type="text" id="node-input-table" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-column"><i class="fa fa-bullseye"></i> Vector Column</label>
+    <input type="text" id="node-input-column" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-idColumn"><i class="fa fa-key"></i> Primary Key</label>
+    <input type="text" id="node-input-idColumn" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-dimension"><i class="fa fa-arrows"></i> Dimension</label>
+    <input type="number" id="node-input-dimension" placeholder="Optional" />
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="pgvector-upsert">
+  <p>Insert or update a row containing a pgvector embedding using PostgreSQL <code>ON CONFLICT</code>.</p>
+  <p>Payload must include the primary key field (default <code>id</code>) and <code>vector</code>. Other fields are upserted alongside the vector.</p>
+</script>

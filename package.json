@@ -1,0 +1,49 @@
+{
+  "name": "@nagual69/node-red-pgvector",
+  "version": "0.1.0",
+  "description": "Node-RED nodes for PostgreSQL + pgvector similarity search and vector operations.",
+  "main": "pgvector.js",
+  "license": "MIT",
+  "author": "Your Name <your.email@example.com>",
+  "keywords": [
+    "node-red",
+    "postgresql",
+    "pg",
+    "pgvector",
+    "vector",
+    "embeddings",
+    "similarity",
+    "ivfflat",
+    "hnsw"
+  ],
+  "homepage": "https://flows.nodered.org/node/@nagual69/node-red-pgvector",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nagual69/node-red-pgvector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nagual69/node-red-pgvector/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "pg": "^8.12.0",
+    "pgvector": "^0.1.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "node-red": {
+    "version": ">=2.0.0",
+    "nodes": {
+      "pgvector-config": "nodes/pgvector-config.js",
+      "pgvector-query": "nodes/pgvector-query.js",
+      "pgvector-insert": "nodes/pgvector-insert.js",
+      "pgvector-upsert": "nodes/pgvector-upsert.js",
+      "pgvector-search": "nodes/pgvector-search.js",
+      "pgvector-schema": "nodes/pgvector-schema.js",
+      "pgvector-admin": "nodes/pgvector-admin.js"
+    }
+  }
+}

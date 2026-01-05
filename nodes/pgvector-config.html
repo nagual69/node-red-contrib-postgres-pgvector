@@ -1,0 +1,89 @@
+<script type="text/javascript">
+  RED.nodes.registerType('pgvector-config', {
+    category: 'config',
+    defaults: {
+      name: { value: '' },
+      host: { value: 'localhost' },
+      port: { value: 5432 },
+      database: { value: '' },
+      ssl: { value: false },
+      max: { value: 10 },
+    },
+    credentials: {
+      user: { type: 'text' },
+      password: { type: 'password' },
+    },
+    label: function () {
+      return this.name || this.host || 'pgvector';
+    },
+  });
+</script>
+
+<script type="text/x-red" data-template-name="pgvector-config">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-config-input-name" placeholder="Friendly name" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-host"><i class="fa fa-server"></i> Host</label>
+    <input type="text" id="node-config-input-host" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-port"><i class="fa fa-plug"></i> Port</label>
+    <input type="number" id="node-config-input-port" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-database"><i class="fa fa-database"></i> Database</label>
+    <input type="text" id="node-config-input-database" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-ssl"><i class="fa fa-lock"></i> SSL</label>
+    <input type="checkbox" id="node-config-input-ssl" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-max"><i class="fa fa-group"></i> Pool size</label>
+    <input type="number" id="node-config-input-max" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-user"><i class="fa fa-user"></i> User</label>
+    <input type="text" id="node-config-input-user" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-password"><i class="fa fa-key"></i> Password</label>
+    <input type="password" id="node-config-input-password" />
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="pgvector-config">
+  <p>Connection configuration node for PostgreSQL with pgvector extension.</p>
+
+  <h3>Configuration</h3>
+  <dl class="message-properties">
+    <dt>Host</dt>
+    <dd>PostgreSQL server hostname or IP address</dd>
+
+    <dt>Port</dt>
+    <dd>PostgreSQL server port (default: 5432)</dd>
+
+    <dt>Database</dt>
+    <dd>Name of the database to connect to</dd>
+
+    <dt>User</dt>
+    <dd>PostgreSQL username (stored securely)</dd>
+
+    <dt>Password</dt>
+    <dd>PostgreSQL password (stored securely in Node-RED credentials)</dd>
+
+    <dt>SSL</dt>
+    <dd>Enable SSL/TLS encrypted connection</dd>
+
+    <dt>Pool Size</dt>
+    <dd>Maximum number of concurrent database connections (default: 10)</dd>
+  </dl>
+
+  <h3>Details</h3>
+  <p>Creates a shared connection pool that is reused by all pgvector nodes referencing this configuration.
+  This improves performance by avoiding the overhead of creating new connections for each query.</p>
+
+  <p>Credentials are stored securely using Node-RED's credentials system and are never exposed in flows.</p>
+</script>

@@ -1,0 +1,388 @@
+[
+  {
+    "id": "setup-flow-1",
+    "type": "tab",
+    "label": "1. Setup Database",
+    "disabled": false,
+    "info": "Run this flow to set up pgvector extension and create an articles table.\n\n1. Click 'Create Extension'\n2. Click 'Create Articles Table'\n3. Click 'Create HNSW Index'"
+  },
+  {
+    "id": "inject-extension",
+    "type": "inject",
+    "z": "setup-flow-1",
+    "name": "Create Extension",
+    "props": [
+      {
+        "p": "action",
+        "v": "create-extension",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 150,
+    "y": 80,
+    "wires": [["admin-node-ext"]]
+  },
+  {
+    "id": "admin-node-ext",
+    "type": "pgvector-admin",
+    "z": "setup-flow-1",
+    "name": "Create Extension",
+    "action": "create-extension",
+    "table": "",
+    "column": "",
+    "metric": "cosine",
+    "dimension": "",
+    "indexName": "",
+    "probes": 10,
+    "connection": "pgvector-config-1",
+    "x": 350,
+    "y": 80,
+    "wires": [["debug-1"]]
+  },
+  {
+    "id": "inject-table",
+    "type": "inject",
+    "z": "setup-flow-1",
+    "name": "Create Articles Table",
+    "props": [
+      {
+        "p": "topic",
+        "v": "CREATE TABLE IF NOT EXISTS articles (id SERIAL PRIMARY KEY, title TEXT NOT NULL, content TEXT, embedding vector(384), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 150,
+    "y": 140,
+    "wires": [["query-node-1"]]
+  },
+  {
+    "id": "query-node-1",
+    "type": "pgvector-query",
+    "z": "setup-flow-1",
+    "name": "Execute Query",
+    "sql": "",
+    "connection": "pgvector-config-1",
+    "x": 350,
+    "y": 140,
+    "wires": [["debug-1"]]
+  },
+  {
+    "id": "inject-index",
+    "type": "inject",
+    "z": "setup-flow-1",
+    "name": "Create HNSW Index",
+    "props": [
+      {
+        "p": "topic",
+        "v": "CREATE INDEX IF NOT EXISTS articles_embedding_hnsw_idx ON articles USING hnsw (embedding vector_cosine_ops)",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 150,
+    "y": 200,
+    "wires": [["query-node-3"]]
+  },
+  {
+    "id": "query-node-3",
+    "type": "pgvector-query",
+    "z": "setup-flow-1",
+    "name": "Create Index",
+    "sql": "",
+    "connection": "pgvector-config-1",
+    "x": 350,
+    "y": 200,
+    "wires": [["debug-1"]]
+  },
+  {
+    "id": "debug-1",
+    "type": "debug",
+    "z": "setup-flow-1",
+    "name": "Status",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 550,
+    "y": 140,
+    "wires": []
+  },
+  {
+    "id": "insert-flow-1",
+    "type": "tab",
+    "label": "2. Insert Embeddings",
+    "disabled": false,
+    "info": "Insert sample articles with embeddings into the database.\n\nClick 'Sample Articles' to insert data."
+  },
+  {
+    "id": "inject-articles",
+    "type": "inject",
+    "z": "insert-flow-1",
+    "name": "Sample Articles",
+    "props": [
+      {
+        "p": "payload",
+        "v": "[{\"title\":\"Machine Learning Basics\",\"content\":\"Introduction to ML algorithms\",\"embedding\":[0.1,0.2,0.3,0.15,0.25]},{\"title\":\"PostgreSQL Tips\",\"content\":\"Advanced PostgreSQL techniques\",\"embedding\":[0.2,0.3,0.1,0.25,0.15]},{\"title\":\"Vector Databases\",\"content\":\"Using vectors for similarity search\",\"embedding\":[0.15,0.25,0.2,0.1,0.3]}]",
+        "vt": "json"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 150,
+    "y": 80,
+    "wires": [["pad-vectors"]]
+  },
+  {
+    "id": "pad-vectors",
+    "type": "function",
+    "z": "insert-flow-1",
+    "name": "Pad vectors to 384 dims",
+    "func": "msg.payload = msg.payload.map(article => {\n  const padded = [...article.embedding];\n  while (padded.length < 384) {\n    padded.push(Math.random() * 0.1);\n  }\n  return {\n    title: article.title,\n    content: article.content,\n    vector: padded\n  };\n});\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 350,
+    "y": 80,
+    "wires": [["insert-node"]]
+  },
+  {
+    "id": "insert-node",
+    "type": "pgvector-insert",
+    "z": "insert-flow-1",
+    "name": "Insert into articles",
+    "table": "articles",
+    "column": "embedding",
+    "idColumn": "id",
+    "dimension": "384",
+    "connection": "pgvector-config-1",
+    "x": 570,
+    "y": 80,
+    "wires": [["debug-2"]]
+  },
+  {
+    "id": "debug-2",
+    "type": "debug",
+    "z": "insert-flow-1",
+    "name": "Inserted IDs",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 750,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "search-flow-1",
+    "type": "tab",
+    "label": "3. Similarity Search",
+    "disabled": false,
+    "info": "Search for similar articles using different distance metrics."
+  },
+  {
+    "id": "inject-search",
+    "type": "inject",
+    "z": "search-flow-1",
+    "name": "Search Similar Articles",
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"vector\":[0.12,0.22,0.25,0.18,0.28]}",
+        "vt": "json"
+      },
+      {
+        "p": "limit",
+        "v": "5",
+        "vt": "num"
+      },
+      {
+        "p": "metric",
+        "v": "cosine",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 150,
+    "y": 100,
+    "wires": [["pad-search-vector"]]
+  },
+  {
+    "id": "pad-search-vector",
+    "type": "function",
+    "z": "search-flow-1",
+    "name": "Pad to 384 dims",
+    "func": "const vec = msg.payload.vector;\nwhile (vec.length < 384) {\n  vec.push(Math.random() * 0.1);\n}\nmsg.payload = { vector: vec };\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 350,
+    "y": 100,
+    "wires": [["search-node"]]
+  },
+  {
+    "id": "search-node",
+    "type": "pgvector-search",
+    "z": "search-flow-1",
+    "name": "Search similar articles",
+    "table": "articles",
+    "column": "embedding",
+    "metric": "cosine",
+    "limit": 5,
+    "normalize": false,
+    "dimension": "384",
+    "select": "id, title, content, embedding <=> $1::vector as distance",
+    "where": "",
+    "connection": "pgvector-config-1",
+    "x": 570,
+    "y": 100,
+    "wires": [["format-results"]]
+  },
+  {
+    "id": "format-results",
+    "type": "function",
+    "z": "search-flow-1",
+    "name": "Format results",
+    "func": "msg.payload = msg.payload.map(row => ({\n  id: row.id,\n  title: row.title,\n  content: row.content,\n  distance: parseFloat(row.distance).toFixed(4)\n}));\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 750,
+    "y": 100,
+    "wires": [["debug-3"]]
+  },
+  {
+    "id": "debug-3",
+    "type": "debug",
+    "z": "search-flow-1",
+    "name": "Search Results",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 900,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "query-flow-1",
+    "type": "tab",
+    "label": "4. Custom Queries",
+    "disabled": false,
+    "info": "Run custom SQL queries against the database."
+  },
+  {
+    "id": "inject-select-all",
+    "type": "inject",
+    "z": "query-flow-1",
+    "name": "Select All Articles",
+    "props": [
+      {
+        "p": "topic",
+        "v": "SELECT id, title, content FROM articles LIMIT 10",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 150,
+    "y": 80,
+    "wires": [["query-node-2"]]
+  },
+  {
+    "id": "inject-count",
+    "type": "inject",
+    "z": "query-flow-1",
+    "name": "Count Articles",
+    "props": [
+      {
+        "p": "topic",
+        "v": "SELECT COUNT(*) as total FROM articles",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 150,
+    "y": 140,
+    "wires": [["query-node-2"]]
+  },
+  {
+    "id": "query-node-2",
+    "type": "pgvector-query",
+    "z": "query-flow-1",
+    "name": "Execute Query",
+    "sql": "",
+    "connection": "pgvector-config-1",
+    "x": 350,
+    "y": 110,
+    "wires": [["debug-4"]]
+  },
+  {
+    "id": "debug-4",
+    "type": "debug",
+    "z": "query-flow-1",
+    "name": "Query Results",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 550,
+    "y": 110,
+    "wires": []
+  },
+  {
+    "id": "pgvector-config-1",
+    "type": "pgvector-config",
+    "host": "postgres",
+    "port": 5432,
+    "database": "vectordb",
+    "ssl": false,
+    "max": 10,
+    "credentials": {
+      "user": "nodered",
+      "password": "nodered123"
+    }
+  }
+]

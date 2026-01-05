@@ -1,0 +1,37 @@
+<script type="text/javascript">
+  RED.nodes.registerType('pgvector-schema', {
+    category: 'pgvector',
+    color: '#f2f2f2',
+    inputs: 1,
+    outputs: 1,
+    icon: 'table.svg',
+    defaults: {
+      name: { value: '' },
+      connection: { type: 'pgvector-config', required: true },
+      table: { value: '' },
+    },
+    label: function () {
+      return this.name || 'pgvector schema';
+    },
+  });
+</script>
+
+<script type="text/x-red" data-template-name="pgvector-schema">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection"><i class="fa fa-database"></i> Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-table"><i class="fa fa-table"></i> Table (optional)</label>
+    <input type="text" id="node-input-table" placeholder="Leave empty to list tables" />
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="pgvector-schema">
+  <p>Inspect PostgreSQL schema for tables and columns.</p>
+  <p>When no table is provided, lists public tables. When a table is provided (via config or <code>msg.table</code>), returns column names and data types. Useful for locating vector columns.</p>
+</script>

@@ -1,0 +1,114 @@
+<script type="text/javascript">
+  RED.nodes.registerType('pgvector-admin', {
+    category: 'pgvector',
+    color: '#ffd5d5',
+    inputs: 1,
+    outputs: 1,
+    icon: 'cog.svg',
+    defaults: {
+      name: { value: '' },
+      connection: { type: 'pgvector-config', required: true },
+      action: { value: 'create-extension' },
+      table: { value: '' },
+      column: { value: '' },
+      metric: { value: 'cosine' },
+      dimension: { value: '' },
+      indexName: { value: '' },
+      probes: { value: 10 },
+    },
+    label: function () {
+      return this.name || 'pgvector admin';
+    },
+  });
+</script>
+
+<script type="text/x-red" data-template-name="pgvector-admin">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection"><i class="fa fa-database"></i> Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-action"><i class="fa fa-wrench"></i> Action</label>
+    <select id="node-input-action">
+      <option value="create-extension">Create vector extension</option>
+      <option value="create-table">Create vector table</option>
+      <option value="create-ivfflat">Create ivfflat index</option>
+      <option value="create-hnsw">Create hnsw index</option>
+      <option value="set-probes">Set ivfflat probes</option>
+      <option value="drop-index">Drop index</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-table"><i class="fa fa-table"></i> Table</label>
+    <input type="text" id="node-input-table" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-column"><i class="fa fa-bullseye"></i> Vector Column</label>
+    <input type="text" id="node-input-column" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-metric"><i class="fa fa-balance-scale"></i> Metric</label>
+    <select id="node-input-metric">
+      <option value="cosine">cosine</option>
+      <option value="l2">l2</option>
+      <option value="inner-product">inner product</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-dimension"><i class="fa fa-arrows"></i> Dimension</label>
+    <input type="number" id="node-input-dimension" placeholder="Required for create-table" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-indexName"><i class="fa fa-link"></i> Index Name</label>
+    <input type="text" id="node-input-indexName" placeholder="Optional" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-probes"><i class="fa fa-bolt"></i> ivfflat probes</label>
+    <input type="number" id="node-input-probes" />
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="pgvector-admin">
+  <p>Administrative operations for pgvector setup and index management.</p>
+
+  <h3>Actions</h3>
+  <dl class="message-properties">
+    <dt>create-extension</dt>
+    <dd>Install the pgvector extension in the database. Run this first before using other pgvector features.</dd>
+
+    <dt>create-table</dt>
+    <dd>Create a new table with a vector column. Requires: table name, column name, and dimension.</dd>
+
+    <dt>create-ivfflat</dt>
+    <dd>Create an IVFFlat index for approximate nearest neighbor search. Good balance of speed and accuracy.</dd>
+
+    <dt>create-hnsw</dt>
+    <dd>Create an HNSW index for approximate nearest neighbor search. Better recall but slower inserts.</dd>
+
+    <dt>set-probes</dt>
+    <dd>Configure IVFFlat search quality (1-100). Higher values = better accuracy but slower search.</dd>
+
+    <dt>drop-index</dt>
+    <dd>Remove an existing index by name.</dd>
+  </dl>
+
+  <h3>Configuration</h3>
+  <p>Most actions require specifying the table name and vector column name.
+  Index creation also requires choosing a distance metric (cosine, l2, or inner-product).</p>
+
+  <h3>Details</h3>
+  <p>For tables with more than 10,000 vectors, creating an index significantly improves search performance.
+  IVFFlat indexes are faster to build, while HNSW indexes provide better search accuracy.</p>
+
+  <h3>Example Workflow</h3>
+  <ol>
+    <li>Run <code>create-extension</code> action</li>
+    <li>Run <code>create-table</code> with dimension (e.g., 1536 for OpenAI embeddings)</li>
+    <li>Insert your vectors using pgvector-insert</li>
+    <li>Create an index with <code>create-hnsw</code> for better performance</li>
+  </ol>
+</script>

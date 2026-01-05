@@ -1,0 +1,175 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "3cc11d24.ff01a2",
+        "type": "comment",
+        "z": "f6f2187d.f17ca8",
+        "name": "WARNING: please check you have started this container with a volume that is mounted to /data\\n otherwise any flow changes are lost when you redeploy or upgrade the container\\n (e.g. upgrade to a more recent node-red docker image).\\n  If you are using named volumes you can ignore this warning.\\n Double click or see info side panel to learn how to start Node-RED in Docker to save your work",
+        "info": "\nTo start docker with a bind mount volume (-v option), for example:\n\n```\ndocker run -it -p 1880:1880 -v /home/user/node_red_data:/data --name mynodered nodered/node-red\n```\n\nwhere `/home/user/node_red_data` is a directory on your host machine where you want to store your flows.\n\nIf you do not do this then you can experiment and redploy flows, but if you restart or upgrade the container the flows will be disconnected and lost. \n\nThey will still exist in a hidden data volume, which can be recovered using standard docker techniques, but that is much more complex than just starting with a named volume as described above.",
+        "x": 350,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "80c009be8ab6b26f",
+        "type": "pgvector-query",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "sql": "",
+        "x": 620,
+        "y": 520,
+        "wires": [
+            [
+                "12ceb02c7a7bd5de"
+            ]
+        ]
+    },
+    {
+        "id": "2cbe3c2c154174b9",
+        "type": "pgvector-insert",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "table": "",
+        "column": "",
+        "idColumn": "id",
+        "dimension": "",
+        "x": 1280,
+        "y": 500,
+        "wires": [
+            [
+                "3dfee71a1d612022"
+            ]
+        ]
+    },
+    {
+        "id": "3dfee71a1d612022",
+        "type": "pgvector-upsert",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "table": "",
+        "column": "",
+        "idColumn": "id",
+        "dimension": "",
+        "x": 1280,
+        "y": 620,
+        "wires": [
+            [
+                "0e09813315522546"
+            ]
+        ]
+    },
+    {
+        "id": "12ceb02c7a7bd5de",
+        "type": "pgvector-search",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "table": "",
+        "column": "",
+        "metric": "cosine",
+        "limit": 10,
+        "normalize": false,
+        "dimension": "",
+        "select": "*",
+        "where": "",
+        "x": 980,
+        "y": 400,
+        "wires": [
+            [
+                "732ef1e58dd112e5"
+            ]
+        ]
+    },
+    {
+        "id": "732ef1e58dd112e5",
+        "type": "pgvector-schema",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "table": "",
+        "x": 1350,
+        "y": 360,
+        "wires": [
+            [
+                "2cbe3c2c154174b9"
+            ]
+        ]
+    },
+    {
+        "id": "0e09813315522546",
+        "type": "pgvector-admin",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "action": "create-extension",
+        "table": "",
+        "column": "",
+        "metric": "cosine",
+        "dimension": "",
+        "indexName": "",
+        "probes": 10,
+        "x": 1700,
+        "y": 620,
+        "wires": [
+            [
+                "182c3da2c408c58b"
+            ]
+        ]
+    },
+    {
+        "id": "145f6802d0263372",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 400,
+        "wires": [
+            [
+                "80c009be8ab6b26f"
+            ]
+        ]
+    },
+    {
+        "id": "182c3da2c408c58b",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1720,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "b7016928e3f38b39",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@nagual69/node-red-pgvector": "0.1.0"
+        }
+    }
+]

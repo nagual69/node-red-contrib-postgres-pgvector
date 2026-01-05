@@ -1,0 +1,8 @@
+# Environment files with secrets
+.env
+
+# Node-RED data (if running locally)
+nodered_data/
+
+# PostgreSQL data (if running locally)
+postgres_data/

@@ -1,0 +1,126 @@
+<script type="text/javascript">
+  RED.nodes.registerType('pgvector-search', {
+    category: 'pgvector',
+    color: '#ffe0c2',
+    inputs: 1,
+    outputs: 1,
+    icon: 'search.svg',
+    defaults: {
+      name: { value: '' },
+      connection: { type: 'pgvector-config', required: true },
+      table: { value: '' },
+      column: { value: '' },
+      metric: { value: 'cosine' },
+      limit: { value: 10 },
+      normalize: { value: false },
+      dimension: { value: '' },
+      select: { value: '*' },
+      where: { value: '' },
+    },
+    label: function () {
+      return this.name || 'pgvector search';
+    },
+  });
+</script>
+
+<script type="text/x-red" data-template-name="pgvector-search">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection"><i class="fa fa-database"></i> Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-table"><i class="fa fa-table"></i> Table</label>
+    <input type="text" id="node-input-table" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-column"><i class="fa fa-bullseye"></i> Vector Column</label>
+    <input type="text" id="node-input-column" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-metric"><i class="fa fa-balance-scale"></i> Metric</label>
+    <select id="node-input-metric">
+      <option value="cosine">cosine</option>
+      <option value="l2">l2</option>
+      <option value="inner-product">inner product</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-limit"><i class="fa fa-sort-numeric-asc"></i> Limit</label>
+    <input type="number" id="node-input-limit" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-normalize"><i class="fa fa-sliders"></i> Normalize</label>
+    <input type="checkbox" id="node-input-normalize" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-dimension"><i class="fa fa-arrows"></i> Dimension</label>
+    <input type="number" id="node-input-dimension" placeholder="Optional" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-select"><i class="fa fa-list"></i> Select</label>
+    <input type="text" id="node-input-select" placeholder="*" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-where"><i class="fa fa-filter"></i> WHERE SQL</label>
+    <input type="text" id="node-input-where" placeholder="Optional extra filter" />
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="pgvector-search">
+  <p>Perform similarity search on vector embeddings stored in PostgreSQL using various distance metrics.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>payload.vector <span class="property-type">array | string</span></dt>
+    <dd>Query vector as float array, JSON string, CSV, or base64-encoded Float32Array</dd>
+
+    <dt class="optional">filter <span class="property-type">object</span></dt>
+    <dd>Object with key=value pairs for filtering results (e.g., {category: "tech"})</dd>
+
+    <dt class="optional">where <span class="property-type">string</span></dt>
+    <dd>Additional SQL WHERE clause for complex filters</dd>
+
+    <dt class="optional">metric <span class="property-type">string</span></dt>
+    <dd>Distance metric: "cosine" (default), "l2", or "inner-product"</dd>
+
+    <dt class="optional">limit <span class="property-type">number</span></dt>
+    <dd>Maximum number of results to return (default: 10)</dd>
+
+    <dt class="optional">normalize <span class="property-type">boolean</span></dt>
+    <dd>Normalize the query vector before searching (recommended for cosine similarity)</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">array</span></dt>
+    <dd>Array of matching records with a "similarity" column showing distance scores</dd>
+  </dl>
+
+  <h3>Details</h3>
+  <p>Searches for vectors similar to the provided query vector using PostgreSQL pgvector extension.
+  Results are ordered by similarity (ascending distance).</p>
+
+  <p><b>Distance Metrics:</b></p>
+  <ul>
+    <li><code>cosine</code> - Cosine distance (best for normalized vectors)</li>
+    <li><code>l2</code> - Euclidean distance (L2 norm)</li>
+    <li><code>inner-product</code> - Negative inner product (for MIPS)</li>
+  </ul>
+
+  <h3>Example</h3>
+  <pre>msg.payload = {
+  vector: [0.1, 0.2, 0.3, 0.4]
+};
+msg.filter = { category: "tech" };
+msg.limit = 5;
+return msg;</pre>
+
+  <h3>References</h3>
+  <ul>
+    <li><a href="https://github.com/pgvector/pgvector">pgvector documentation</a></li>
+  </ul>
+</script>

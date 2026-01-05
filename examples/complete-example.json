@@ -1,0 +1,273 @@
+[
+  {
+    "id": "complete-example-tab",
+    "type": "tab",
+    "label": "Complete Example",
+    "disabled": false,
+    "info": "Complete end-to-end example demonstrating all pgvector capabilities.\n\nFlow:\n1. Setup database (extension, table, index)\n2. Insert sample embeddings\n3. Perform similarity searches\n4. Run custom queries\n\nStart by deploying and clicking the 'Start Setup' inject node."
+  },
+  {
+    "id": "start-setup",
+    "type": "inject",
+    "z": "complete-example-tab",
+    "name": "Start Setup",
+    "props": [
+      {
+        "p": "step",
+        "v": "1-extension",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 100,
+    "y": 60,
+    "wires": [["setup-sequence"]]
+  },
+  {
+    "id": "setup-sequence",
+    "type": "function",
+    "z": "complete-example-tab",
+    "name": "Sequence Setup Steps",
+    "func": "// This demonstrates a setup sequence\n// In practice, you'd run these steps separately\nconst step = msg.step || \"1-extension\";\n\nswitch(step) {\n  case \"1-extension\":\n    msg.action = \"create-extension\";\n    break;\n  case \"2-table\":\n    msg.action = \"create-table\";\n    msg.table = \"products\";\n    msg.column = \"embedding\";\n    msg.dimension = 384;\n    break;\n  case \"3-index\":\n    msg.action = \"create-hnsw\";\n    msg.table = \"products\";\n    msg.column = \"embedding\";\n    msg.metric = \"cosine\";\n    break;\n}\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 280,
+    "y": 60,
+    "wires": [["admin-complete"]]
+  },
+  {
+    "id": "admin-complete",
+    "type": "pgvector-admin",
+    "z": "complete-example-tab",
+    "name": "Admin Operations",
+    "action": "create-extension",
+    "table": "",
+    "column": "",
+    "metric": "cosine",
+    "dimension": "",
+    "indexName": "",
+    "probes": 10,
+    "connection": "config-complete",
+    "x": 490,
+    "y": 60,
+    "wires": [["log-setup"]]
+  },
+  {
+    "id": "log-setup",
+    "type": "function",
+    "z": "complete-example-tab",
+    "name": "Log Status",
+    "func": "node.log(`Setup step completed: ${JSON.stringify(msg.payload)}`);\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 680,
+    "y": 60,
+    "wires": [["debug-complete"]]
+  },
+  {
+    "id": "debug-complete",
+    "type": "debug",
+    "z": "complete-example-tab",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 850,
+    "y": 60,
+    "wires": []
+  },
+  {
+    "id": "insert-products",
+    "type": "inject",
+    "z": "complete-example-tab",
+    "name": "Insert Sample Products",
+    "props": [
+      {
+        "p": "payload",
+        "v": "[{\"name\":\"Wireless Headphones\",\"description\":\"Premium noise-cancelling headphones\",\"price\":299.99,\"category\":\"electronics\"},{\"name\":\"Running Shoes\",\"description\":\"Lightweight athletic running shoes\",\"price\":129.99,\"category\":\"sports\"},{\"name\":\"Coffee Maker\",\"description\":\"Programmable drip coffee maker\",\"price\":49.99,\"category\":\"kitchen\"}]",
+        "vt": "json"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 100,
+    "y": 140,
+    "wires": [["generate-embeddings"]]
+  },
+  {
+    "id": "generate-embeddings",
+    "type": "function",
+    "z": "complete-example-tab",
+    "name": "Generate Random Embeddings",
+    "func": "// Generate realistic product embeddings (384-dim)\nmsg.payload = msg.payload.map(product => {\n  const embedding = Array(384).fill(0).map(() => Math.random());\n  return {\n    name: product.name,\n    description: product.description,\n    price: product.price,\n    category: product.category,\n    vector: embedding\n  };\n});\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 300,
+    "y": 140,
+    "wires": [["insert-products-node"]]
+  },
+  {
+    "id": "insert-products-node",
+    "type": "pgvector-insert",
+    "z": "complete-example-tab",
+    "name": "Insert Products",
+    "table": "products",
+    "column": "embedding",
+    "idColumn": "id",
+    "dimension": "384",
+    "connection": "config-complete",
+    "x": 520,
+    "y": 140,
+    "wires": [["log-insert"]]
+  },
+  {
+    "id": "log-insert",
+    "type": "function",
+    "z": "complete-example-tab",
+    "name": "Log Inserted",
+    "func": "node.log(`Inserted ${msg.payload.length} products`);\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 680,
+    "y": 140,
+    "wires": [["debug-complete"]]
+  },
+  {
+    "id": "search-similar",
+    "type": "inject",
+    "z": "complete-example-tab",
+    "name": "Find Similar Products",
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"vector\":[0.5,0.5,0.5,0.5,0.5,0.4,0.6,0.45,0.55,0.5]}",
+        "vt": "json"
+      },
+      {
+        "p": "limit",
+        "v": "3",
+        "vt": "num"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 100,
+    "y": 220,
+    "wires": [["pad-search-vector"]]
+  },
+  {
+    "id": "pad-search-vector",
+    "type": "function",
+    "z": "complete-example-tab",
+    "name": "Pad Vector to 384 Dims",
+    "func": "const vec = msg.payload.vector;\nwhile (vec.length < 384) {\n  vec.push(Math.random());\n}\nmsg.payload = { vector: vec };\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 300,
+    "y": 220,
+    "wires": [["search-products-node"]]
+  },
+  {
+    "id": "search-products-node",
+    "type": "pgvector-search",
+    "z": "complete-example-tab",
+    "name": "Find Similar Products",
+    "table": "products",
+    "column": "embedding",
+    "metric": "cosine",
+    "limit": 3,
+    "normalize": false,
+    "dimension": "384",
+    "select": "id, name, category, price, embedding <=> $1::vector as similarity",
+    "where": "",
+    "connection": "config-complete",
+    "x": 540,
+    "y": 220,
+    "wires": [["format-search-results"]]
+  },
+  {
+    "id": "format-search-results",
+    "type": "function",
+    "z": "complete-example-tab",
+    "name": "Format Results",
+    "func": "msg.payload = msg.payload.map(product => ({\n  id: product.id,\n  name: product.name,\n  category: product.category,\n  price: `$${product.price}`,\n  similarity: parseFloat(product.similarity).toFixed(4)\n}));\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 750,
+    "y": 220,
+    "wires": [["debug-complete"]]
+  },
+  {
+    "id": "query-stats",
+    "type": "inject",
+    "z": "complete-example-tab",
+    "name": "Get Database Stats",
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"sql\":\"SELECT COUNT(*) as total_products, array_length(embedding::real[], 1) as vector_dims FROM products LIMIT 1\"}",
+        "vt": "json"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 100,
+    "y": 300,
+    "wires": [["query-stats-node"]]
+  },
+  {
+    "id": "query-stats-node",
+    "type": "pgvector-query",
+    "z": "complete-example-tab",
+    "name": "Query Stats",
+    "sql": "",
+    "connection": "config-complete",
+    "x": 320,
+    "y": 300,
+    "wires": [["debug-complete"]]
+  },
+  {
+    "id": "config-complete",
+    "type": "pgvector-config",
+    "host": "postgres",
+    "port": 5432,
+    "database": "vectordb",
+    "ssl": false,
+    "max": 10,
+    "credentials": {
+      "user": "nodered",
+      "password": "nodered123"
+    }
+  }
+]

@@ -1,0 +1,64 @@
+<script type="text/javascript">
+  RED.nodes.registerType('pgvector-query', {
+    category: 'pgvector',
+    color: '#c2e3ff',
+    inputs: 1,
+    outputs: 1,
+    icon: 'db.svg',
+    align: 'right',
+    defaults: {
+      name: { value: '' },
+      connection: { type: 'pgvector-config', required: true },
+      sql: { value: '' },
+    },
+    label: function () {
+      return this.name || 'pgvector query';
+    },
+  });
+</script>
+
+<script type="text/x-red" data-template-name="pgvector-query">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection"><i class="fa fa-database"></i> Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-sql"><i class="fa fa-code"></i> SQL</label>
+    <textarea id="node-input-sql" rows="5" placeholder="SELECT * FROM ..."></textarea>
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="pgvector-query">
+  <p>Execute arbitrary SQL queries against the PostgreSQL database.</p>
+
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>sql or topic <span class="property-type">string</span></dt>
+    <dd>SQL query string to execute</dd>
+
+    <dt class="optional">params <span class="property-type">array</span></dt>
+    <dd>Array of values for parameterized queries using $1, $2, etc. placeholders</dd>
+  </dl>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">array</span></dt>
+    <dd>Array of result rows from the query</dd>
+
+    <dt>count <span class="property-type">number</span></dt>
+    <dd>Number of rows returned or affected</dd>
+  </dl>
+
+  <h3>Details</h3>
+  <p>Executes any SQL statement including SELECT, INSERT, UPDATE, DELETE, and DDL commands.
+  Use parameterized queries with $1, $2 placeholders to safely inject user values.</p>
+
+  <h3>Example</h3>
+  <pre>msg.sql = "SELECT * FROM embeddings WHERE category = $1 LIMIT $2";
+msg.params = ["tech", 10];
+return msg;</pre>
+</script>
