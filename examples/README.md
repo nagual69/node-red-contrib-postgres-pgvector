@@ -1,52 +1,221 @@
 # Node-RED pgvector Example Flows
 
-This directory contains ready-to-import Node-RED flows demonstrating pgvector capabilities.
+This directory contains ready-to-import Node-RED flows demonstrating all pgvector node capabilities. Each flow is fully tested and production-ready.
 
-## Available Flows
+## Quick Start
 
-### 1. sample-flows.json - Complete Feature Set
+1. Open Node-RED (default: http://localhost:1880)
+2. Menu → Import → Select one of the JSON files below
+3. Click Import to add the flow to your workspace
+4. Configure the pgvector-config node with your PostgreSQL credentials (if not using Docker defaults)
+5. Deploy and interact with the nodes
 
-Four separate tabs demonstrating different aspects:
+## Example Files
 
-#### Tab: "1. Setup Database"
-Sets up pgvector with extension, table creation, and indexing.
+### 📌 sample-flows.json - **Recommended Starting Point**
 
-**Steps:**
-- Click "Create Extension" to install pgvector
-- Click "Create Table" to create an articles table (384-dim vectors)
-- Click "Create HNSW Index" to create a search index
+Four separate tabs demonstrating the complete workflow:
 
-**Use for:** Initial database setup
+#### Tab 1: "1. Setup Database"
+Initialize pgvector and create the articles table.
 
-#### Tab: "2. Insert Embeddings"
-Insert sample article embeddings into the database.
+**What it does:**
+- Creates pgvector extension in PostgreSQL
+- Creates `articles` table with columns: `id`, `title`, `content`, `embedding` (384-dim), `created_at`
+- Creates HNSW index for fast similarity search
 
-**Features:**
-- Bulk insert multiple embeddings
-- Automatic vector padding to 384 dimensions
-- Returns generated IDs
+**To use:**
+1. Click "Create Extension" button
+2. Check debug panel for confirmation (payload: array[0])
+3. Click "Create Articles Table" button
+4. Click "Create HNSW Index" button
 
-**Use for:** Loading data
+**Configuration:**
+- Uses Docker credentials: `postgres` host, user `nodered`, password `nodered123`
+- Modify pgvector-config node if using different credentials
 
-#### Tab: "3. Similarity Search"
-Perform similarity searches with different distance metrics.
+#### Tab 2: "2. Insert Embeddings"
+Insert sample article data with embeddings.
 
-**Metrics demonstrated:**
-- **Cosine** - Best for normalized vectors
-- **L2** - Euclidean distance
+**What it does:**
+- Takes sample articles with small embedding arrays
+- Pads embeddings to 384 dimensions (required by table schema)
+- Bulk inserts 3 articles into the database
+
+**To use:**
+1. Click "Sample Articles" button
+2. Check debug "Inserted IDs" panel for returned IDs
+
+**Sample data:**
+- "Machine Learning Basics" with intro text
+- "PostgreSQL Tips" with database techniques
+- "Vector Databases" with similarity search content
+
+**Output:** Returns array of inserted record IDs
+
+#### Tab 3: "3. Similarity Search"
+Find similar articles using different distance metrics.
+
+**What it does:**
+- Takes a query vector (padded to 384 dimensions)
+- Searches for top 5 most similar articles
+- Calculates distance scores using three metrics
+
+**Distance metrics demonstrated:**
+- **Cosine** - Best for normalized vectors, values 0-2 (0=identical)
+- **L2 (Euclidean)** - Euclidean distance, useful for dense vectors
 - **Inner Product** - For maximum inner product search
 
-**Use for:** Finding similar items
+**To use:**
+Click "Search Similar Articles" button to run the default search. Each metric run produces different result orderings based on the distance calculation.
 
-#### Tab: "4. Custom Queries"
-Run custom SQL queries against the pgvector database.
+**Output:** Returns similar articles ranked by distance score
 
-**Examples:**
-- Select all articles
-- Count records
-- Check vector dimensions
+**Customization:**
+- Modify the inject node's vector values to search with different embeddings
+- Change the `limit` property to return more/fewer results
 
-**Use for:** Data inspection and analytics
+#### Tab 4: "4. Custom Queries"
+Execute custom SQL queries against the database.
+
+**What it does:**
+- SELECT all articles with limit
+- COUNT total articles in database
+- Execute any arbitrary SQL
+
+**To use:**
+1. Click "Select All Articles" to retrieve article data
+2. Click "Count Articles" to get total row count
+
+**Output:** 
+- SELECT: Returns array of record objects
+- COUNT: Returns array with single object containing `total` field
+
+**Customization:**
+- Click the inject node's pencil icon to modify SQL queries
+- Any valid PostgreSQL query works
+
+---
+
+### complete-example.json
+
+Demonstrates a complete end-to-end workflow with a `products` table.
+
+**Flow includes:**
+- Sequence-based setup (extension → table → index in order)
+- Sample product insertion (Electronics, Books, Clothing categories)
+- Search with filter support (search only products in specific category)
+- Statistics and analytics queries
+
+**Best for:**
+- Learning multi-step workflows
+- Understanding how to structure complex flows
+- Reference for category-filtered searches
+
+**Configuration:**
+- Uses Docker credentials
+- Table: `products` with `name`, `category`, and `embedding` columns
+- Dimension: 384
+
+---
+
+### basic-flows.json
+
+Simple starter template with minimal nodes.
+
+**Flow includes:**
+- Single config node
+- Basic insert and search setup
+- Good for beginners
+
+**Best for:**
+- Learning individual node functionality
+- Creating custom flows from scratch
+- Quick prototyping
+
+---
+
+## Testing the Flows
+
+All flows have been tested in the included Docker environment. To test locally:
+
+### Option 1: Docker Compose (Recommended)
+
+```bash
+cd test
+docker-compose up -d
+```
+
+This starts:
+- PostgreSQL 16 with pgvector extension
+- Node-RED 4.1.2 with the pgvector package pre-installed
+
+Then open http://localhost:1880 in your browser.
+
+### Option 2: Manual PostgreSQL Setup
+
+1. Install PostgreSQL with pgvector extension
+2. Create database and user
+3. Update pgvector-config credentials in flows
+4. Import and test
+
+---
+
+## Embedding Dimensions
+
+The sample flows use **384-dimensional vectors** (common for sentence transformers like SBERT).
+
+To use different dimensions:
+1. Update the dimension in pgvector-config
+2. Update table creation SQL (change `vector(384)` to your dimension)
+3. Ensure your embeddings match the configured dimension
+
+Popular embedding dimensions:
+- **OpenAI text-embedding-3-small/large**: 512 / 3072
+- **Sentence Transformers (SBERT)**: 384
+- **Cohere**: 1024
+- **Google Vertex AI**: 768
+
+---
+
+## Troubleshooting
+
+### "Column 'title' does not exist"
+The table schema doesn't match the insert data. Check that your CREATE TABLE matches the data being inserted.
+
+### "No pgvector config provided"
+- Verify pgvector-config node exists
+- Check that all nodes reference the correct config node
+- Ensure config node credentials are valid
+
+### "Embedding must be a vector"
+- Verify vector is a float array `[0.1, 0.2, 0.3, ...]`
+- Check vector length matches configured dimension
+- Vector padding may be needed (see sample-flows padding function)
+
+### Search returns no results
+- Verify data was inserted (check "4. Custom Queries" → "Count Articles")
+- Check table and column names match in search node config
+- Ensure embedding column has data
+
+---
+
+## Next Steps
+
+After running the sample flows:
+
+1. **Connect to real embeddings:** Replace sample vectors with actual embeddings from OpenAI, HuggingFace, or other APIs
+2. **Build your flow:** Use nodes as building blocks for your application
+3. **Add indexes:** For >10k vectors, create appropriate indexes (sample shows HNSW)
+4. **Monitor performance:** Use pgvector-schema to inspect table dimensions and indexes
+
+---
+
+## Documentation
+
+- **Main README:** [../README.md](../README.md) - Node descriptions and API reference
+- **Copilot Instructions:** [../.github/copilot-instructions.md](../.github/copilot-instructions.md) - Developer guide
+- **pgvector Extension:** https://github.com/pgvector/pgvector - Vector operations docs
 
 ### 2. complete-example.json - End-to-End Workflow
 

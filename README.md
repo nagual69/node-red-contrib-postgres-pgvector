@@ -114,9 +114,21 @@ Administrative operations for pgvector setup and index management.
 - `set-probes` - Configure IVFFlat search quality
 - `drop-index` - Remove an index
 
-## Example Flow
+## Example Flows
 
-Import the example flow from [examples/basic-flows.json](examples/basic-flows.json) to see a complete workflow.
+Three ready-to-use example flows are provided in the [examples/](examples/) directory:
+
+1. **[sample-flows.json](examples/sample-flows.json)** - **Start here!** Four separate tabs demonstrating all features:
+   - Setup: Create extension, table, and HNSW index
+   - Insert: Bulk insert articles with embeddings
+   - Search: Similarity search with cosine/L2/inner-product metrics
+   - Query: Custom SQL queries and data inspection
+
+2. **[complete-example.json](examples/complete-example.json)** - End-to-end workflow with products table
+
+3. **[basic-flows.json](examples/basic-flows.json)** - Simple starter template
+
+**To import:** In Node-RED, use Menu → Import and select a flow file from the examples directory.
 
 ## Quick Start
 
@@ -159,13 +171,17 @@ For large datasets (>10,000 vectors), create an index:
 - Use pgvector-admin with action "create-hnsw"
 - Generally provides better search quality
 
+## Documentation
+
+- **[Example Flows Guide](examples/README.md)** - Detailed walkthrough of all example flows
+- **[Testing Guide](TESTING.md)** - Comprehensive testing procedures and troubleshooting
+- **[pgvector Extension Docs](https://github.com/pgvector/pgvector)** - Vector database operations
+- **[Node-RED Documentation](https://nodered.org/docs)** - Flow development and deployment
+
 ## Development
 
-- Main entry: [pgvector.js](pgvector.js)
-- Nodes: [nodes/](nodes/) directory with paired `.js` and `.html` files
-- Utilities: [lib/](lib/) for vector parsing and query building
+### Local Testing
 
-Local testing:
 ```bash
 npm install
 npm link
@@ -173,6 +189,73 @@ npm link
 cd ~/.node-red
 npm link @nagual69/node-red-pgvector
 ```
+
+### Docker Testing
+
+```bash
+cd test
+docker-compose up -d
+# Node-RED available at http://localhost:1880
+```
+
+### Project Structure
+
+```
+pgvector.js              # Main entry point registering all nodes
+package.json             # NPM package manifest with @nagual69 scope
+index.d.ts              # TypeScript type definitions
+README.md               # This file
+TESTING.md              # Comprehensive testing guide
+LICENSE                 # MIT license
+.gitignore              # Git ignore rules
+
+nodes/                  # Node implementations (7 files)
+├── pgvector-config.js/html
+├── pgvector-admin.js/html
+├── pgvector-query.js/html
+├── pgvector-insert.js/html
+├── pgvector-upsert.js/html
+├── pgvector-search.js/html
+└── pgvector-schema.js/html
+
+lib/                    # Utility libraries
+├── client.js           # Connection pool management
+└── vector-utils.js     # Vector parsing, validation, operators
+
+examples/               # Ready-to-import example flows
+├── sample-flows.json   # Complete feature demonstration (4 tabs)
+├── complete-example.json # End-to-end workflow
+├── basic-flows.json    # Minimal starter
+└── README.md          # Example flow documentation
+
+test/                   # Docker test environment
+├── docker-compose.yml  # PostgreSQL + Node-RED
+├── init.sql           # Database initialization
+└── README.md          # Testing instructions
+```
+
+### Code Patterns
+
+**Node Implementation Pattern:**
+- All nodes follow standard Node-RED structure
+- Use `withClient(pool, fn)` for database operations
+- Call `node.error(err, msg)` AND `done(err)` for error handling
+- Set `node.status()` for visual feedback (blue=processing, red=error)
+- Properties use non-conflicting names (e.g., `nodeMetric` not `metric`)
+
+**Vector Utility Functions:**
+- `parseVector()` - Accepts arrays, JSON strings, CSV, base64
+- `normalizeVector()` - L2 normalization for cosine similarity
+- `validateDimension()` - Ensures vector matches configured dimension
+- `buildSimilarityQuery()` - Generates parameterized SQL with correct operators
+
+### Contributing
+
+1. Ensure all nodes follow error handling pattern
+2. Test with provided Docker environment
+3. Update examples if adding features
+4. Add tests to TESTING.md
+5. Update TypeScript definitions in index.d.ts
 
 ## License
 
