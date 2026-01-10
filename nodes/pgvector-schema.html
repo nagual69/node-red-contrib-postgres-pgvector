@@ -4,7 +4,7 @@
     color: '#f2f2f2',
     inputs: 1,
     outputs: 1,
-    icon: 'table.svg',
+    icon: 'font-awesome/fa-table',
     defaults: {
       name: { value: '' },
       connection: { type: 'pgvector-config', required: true },
@@ -16,7 +16,7 @@
   });
 </script>
 
-<script type="text/x-red" data-template-name="pgvector-schema">
+<script type="text/html" data-template-name="pgvector-schema">
   <div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
     <input type="text" id="node-input-name" />
@@ -31,7 +31,7 @@
   </div>
 </script>
 
-<script type="text/x-red" data-help-name="pgvector-schema">
+<script type="text/html" data-help-name="pgvector-schema">
   <p>Inspect PostgreSQL schema for tables and columns.</p>
   <p>When no table is provided, lists public tables. When a table is provided (via config or <code>msg.table</code>), returns column names and data types. Useful for locating vector columns.</p>
 </script>

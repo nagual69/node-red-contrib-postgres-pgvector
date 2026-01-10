@@ -4,7 +4,7 @@
     color: '#c2ffd0',
     inputs: 1,
     outputs: 1,
-    icon: 'arrow-in.svg',
+    icon: 'font-awesome/fa-download',
     defaults: {
       name: { value: '' },
       connection: { type: 'pgvector-config', required: true },
@@ -19,7 +19,7 @@
   });
 </script>
 
-<script type="text/x-red" data-template-name="pgvector-insert">
+<script type="text/html" data-template-name="pgvector-insert">
   <div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
     <input type="text" id="node-input-name" />
@@ -46,7 +46,7 @@
   </div>
 </script>
 
-<script type="text/x-red" data-help-name="pgvector-insert">
+<script type="text/html" data-help-name="pgvector-insert">
   <p>Insert one or more records with vector embeddings into a PostgreSQL table.</p>
 
   <h3>Inputs</h3>

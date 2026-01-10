@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:nodered.org)",
+      "Bash(dir /b \"D:\\\\github-development\\\\node-red-pgvector\\\\nodes\")",
+      "Bash(npm install:*)",
+      "Bash(npm run test:unit:*)",
+      "Bash(node -e:*)",
+      "Bash(npm pack:*)"
+    ]
+  }
+}

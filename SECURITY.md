@@ -8,4 +8,4 @@
 
 ## Supported Versions
 
-This project is pre-1.0.0. Security fixes will be applied to the latest release and backported only if feasible.
+Security fixes will be applied to the latest release. Critical fixes may be backported to previous minor versions if feasible.

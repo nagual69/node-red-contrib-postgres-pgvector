@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Development
 - **package.json** - Publication-ready metadata
-  - Package name `node-red-contrib-postgres-pgvector`
+  - Package name `@nagual69/node-red-pgvector`
   - Node-RED 2.0.0+ compatible
   - Proper author and repository fields
   - pgvector and pg dependencies specified
@@ -122,11 +122,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Installation
 ```bash
 # Via Node-RED Palette Manager
-Search: node-red-contrib-postgres-pgvector
+Search: @nagual69/node-red-pgvector
 
 # Or via npm
 npm install -g node-red
-npm install node-red-contrib-postgres-pgvector
+npm install @nagual69/node-red-pgvector
 ```
 
 ### Quick Start

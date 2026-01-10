@@ -1,4 +1,4 @@
-# Testing Environment for node-red-contrib-postgres-pgvector
+# Testing Environment for @nagual69/node-red-pgvector
 
 ⚠️ The Docker Compose stack ships with convenience credentials (`user: nodered`, `password: nodered123`). Use only for local testing and change them if you expose the services beyond your machine.
 
@@ -124,7 +124,7 @@ docker-compose down -v
 ### Nodes not appearing in palette
 
 ```bash
-docker-compose exec nodered sh -c "cd /data && npm link node-red-contrib-postgres-pgvector"
+docker-compose exec nodered sh -c "cd /data && npm link @nagual69/node-red-pgvector"
 docker-compose restart nodered
 ```
 

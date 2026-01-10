@@ -1,6 +1,6 @@
 {
-  "name": "node-red-contrib-postgres-pgvector",
-  "version": "0.1.0",
+  "name": "@nagual69/node-red-pgvector",
+  "version": "1.0.0",
   "description": "Node-RED nodes for PostgreSQL + pgvector similarity search and vector operations.",
   "main": "pgvector.js",
   "license": "MIT",
@@ -16,7 +16,7 @@
     "ivfflat",
     "hnsw"
   ],
-  "homepage": "https://flows.nodered.org/node/node-red-contrib-postgres-pgvector",
+  "homepage": "https://flows.nodered.org/node/@nagual69/node-red-pgvector",
   "files": [
     "nodes/**/*",
     "lib/**/*",
@@ -25,30 +25,32 @@
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
-    "QUICK_START.md",
-    "PACKAGE_SUMMARY.md",
-    "DOCUMENTATION_INDEX.md",
     "examples/**/*"
   ],
   "scripts": {
-    "test": "node -e \"console.log('No automated tests yet; see TESTING.md for manual steps.')\"",
+    "test": "mocha --timeout 10000",
+    "test:unit": "mocha --timeout 10000 \"test/unit/**/*.test.js\"",
+    "test:integration": "mocha --timeout 30000 \"test/integration/**/*.test.js\"",
     "pack-preview": "npm pack --dry-run"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nagual69/node-red-contrib-postgres-pgvector.git"
+    "url": "https://github.com/nagual69/node-red-pgvector.git"
   },
   "bugs": {
-    "url": "https://github.com/nagual69/node-red-contrib-postgres-pgvector/issues"
+    "url": "https://github.com/nagual69/node-red-pgvector/issues"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
     "pg": "^8.12.0",
+    "pg-format": "^1.0.4",
     "pgvector": "^0.1.8"
   },
   "devDependencies": {
+    "mocha": "^10.2.0",
+    "sinon": "^17.0.1",
     "typescript": "^5.7.2"
   },
   "node-red": {

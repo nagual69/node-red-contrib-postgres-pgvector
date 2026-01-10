@@ -1,4 +1,4 @@
-# node-red-contrib-postgres-pgvector
+# @nagual69/node-red-pgvector
 
 Node-RED nodes for PostgreSQL + pgvector: create vector tables, insert/upsert embeddings, run similarity search (cosine, L2, inner product), and manage indexes.
 
@@ -15,11 +15,11 @@ CREATE EXTENSION vector;
 
 ## Install
 
-From the Node-RED palette manager, search for `node-red-contrib-postgres-pgvector` and click install.
+From the Node-RED palette manager, search for `@nagual69/node-red-pgvector` and click install.
 
 Or install via npm in your Node-RED user directory (typically `~/.node-red`):
 ```bash
-npm install node-red-contrib-postgres-pgvector
+npm install @nagual69/node-red-pgvector
 ```
 
 Restart Node-RED after installation.
@@ -187,7 +187,7 @@ npm install
 npm link
 # In Node-RED directory
 cd ~/.node-red
-npm link node-red-contrib-postgres-pgvector
+npm link @nagual69/node-red-pgvector
 ```
 
 ### Docker Testing

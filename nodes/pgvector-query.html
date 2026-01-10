@@ -4,7 +4,7 @@
     color: '#c2e3ff',
     inputs: 1,
     outputs: 1,
-    icon: 'db.svg',
+    icon: 'font-awesome/fa-database',
     align: 'right',
     defaults: {
       name: { value: '' },
@@ -17,7 +17,7 @@
   });
 </script>
 
-<script type="text/x-red" data-template-name="pgvector-query">
+<script type="text/html" data-template-name="pgvector-query">
   <div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
     <input type="text" id="node-input-name" />
@@ -32,7 +32,7 @@
   </div>
 </script>
 
-<script type="text/x-red" data-help-name="pgvector-query">
+<script type="text/html" data-help-name="pgvector-query">
   <p>Execute arbitrary SQL queries against the PostgreSQL database.</p>
 
   <h3>Inputs</h3>
