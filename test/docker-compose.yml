@@ -34,9 +34,8 @@ services:
       sh -c "
         cd /usr/src/node-red-contrib-postgres-pgvector &&
         npm install &&
-        npm link &&
         cd /data &&
-        npm link node-red-contrib-postgres-pgvector &&
+        npm install /usr/src/node-red-contrib-postgres-pgvector &&
         npm start
       "
 

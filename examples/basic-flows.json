@@ -2,97 +2,201 @@
   {
     "id": "pgvector-flow",
     "type": "tab",
-    "label": "pgvector demo",
+    "label": "pgvector Basic Demo",
     "disabled": false,
-    "info": "Demo flows for pgvector nodes"
+    "info": "Basic demo flow for pgvector nodes.\n\nThis flow demonstrates:\n1. Creating a table with vector column\n2. Inserting vectors with metadata\n3. Running similarity search\n\nBefore using:\n1. Deploy the flow\n2. Click 'Create Table' to set up the database\n3. Click 'Insert Sample' to add data\n4. Click 'Search' to find similar vectors"
   },
   {
-    "id": "config-node",
+    "id": "pgvector-config-basic",
     "type": "pgvector-config",
-    "name": "pg",
-    "host": "localhost",
+    "name": "PostgreSQL pgvector",
+    "host": "postgres",
     "port": 5432,
-    "database": "postgres",
+    "database": "vectordb",
     "ssl": false,
     "max": 10,
-    "user": "postgres",
-    "password": "postgres"
+    "credentials": {
+      "user": "nodered",
+      "password": "nodered123"
+    }
+  },
+  {
+    "id": "inject-create-table",
+    "type": "inject",
+    "z": "pgvector-flow",
+    "name": "Create Table",
+    "props": [
+      {
+        "p": "action",
+        "v": "create-table",
+        "vt": "str"
+      },
+      {
+        "p": "table",
+        "v": "items",
+        "vt": "str"
+      },
+      {
+        "p": "column",
+        "v": "embedding",
+        "vt": "str"
+      },
+      {
+        "p": "dimension",
+        "v": "384",
+        "vt": "num"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 120,
+    "y": 80,
+    "wires": [["create-table"]]
   },
   {
     "id": "create-table",
     "type": "pgvector-admin",
     "z": "pgvector-flow",
-    "name": "create table",
-    "connection": "config-node",
+    "name": "Create Table",
+    "connection": "pgvector-config-basic",
     "action": "create-table",
     "table": "items",
     "column": "embedding",
     "metric": "cosine",
-    "dimension": 3,
-    "wires": [[]]
+    "dimension": "384",
+    "indexName": "",
+    "probes": 10,
+    "x": 310,
+    "y": 80,
+    "wires": [["debug-results"]]
+  },
+  {
+    "id": "inject-sample",
+    "type": "inject",
+    "z": "pgvector-flow",
+    "name": "Insert Sample",
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"vector\":[0.1,0.2,0.3,0.15,0.25],\"metadata\":{\"category\":\"demo\",\"name\":\"Sample Item\"}}",
+        "vt": "json"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 120,
+    "y": 160,
+    "wires": [["pad-insert-vector"]]
+  },
+  {
+    "id": "pad-insert-vector",
+    "type": "function",
+    "z": "pgvector-flow",
+    "name": "Pad to 384 dims",
+    "func": "const vec = msg.payload.vector;\nwhile (vec.length < 384) {\n  vec.push(Math.random() * 0.1);\n}\nmsg.payload.vector = vec;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 300,
+    "y": 160,
+    "wires": [["insert"]]
   },
   {
     "id": "insert",
     "type": "pgvector-insert",
     "z": "pgvector-flow",
-    "name": "insert",
-    "connection": "config-node",
+    "name": "Insert",
+    "connection": "pgvector-config-basic",
     "table": "items",
     "column": "embedding",
     "idColumn": "id",
-    "dimension": 3,
-    "wires": [["search"]]
+    "dimension": "384",
+    "x": 470,
+    "y": 160,
+    "wires": [["debug-results"]]
   },
   {
-    "id": "inject",
+    "id": "inject-search",
     "type": "inject",
     "z": "pgvector-flow",
-    "name": "demo payload",
+    "name": "Search",
     "props": [
       {
-        "p": "payload"
+        "p": "payload",
+        "v": "{\"vector\":[0.12,0.22,0.28,0.16,0.24]}",
+        "vt": "json"
+      },
+      {
+        "p": "limit",
+        "v": "5",
+        "vt": "num"
       }
     ],
     "repeat": "",
     "crontab": "",
-    "once": true,
+    "once": false,
     "onceDelay": 0.1,
     "topic": "",
-    "payloadType": "json",
-    "payload": "{\"vector\":[0.1,0.2,0.3],\"metadata\":{\"category\":\"demo\"}}",
-    "wires": [["insert"]]
+    "x": 110,
+    "y": 240,
+    "wires": [["pad-search-vector"]]
+  },
+  {
+    "id": "pad-search-vector",
+    "type": "function",
+    "z": "pgvector-flow",
+    "name": "Pad to 384 dims",
+    "func": "const vec = msg.payload.vector;\nwhile (vec.length < 384) {\n  vec.push(Math.random() * 0.1);\n}\nmsg.payload = { vector: vec };\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 300,
+    "y": 240,
+    "wires": [["search"]]
   },
   {
     "id": "search",
     "type": "pgvector-search",
     "z": "pgvector-flow",
-    "name": "similarity search",
-    "connection": "config-node",
+    "name": "Similarity Search",
+    "connection": "pgvector-config-basic",
     "table": "items",
     "column": "embedding",
     "metric": "cosine",
     "limit": 5,
     "normalize": true,
-    "dimension": 3,
+    "dimension": "384",
     "select": "*",
     "where": "",
-    "wires": [["debug"]]
+    "x": 490,
+    "y": 240,
+    "wires": [["debug-results"]]
   },
   {
-    "id": "debug",
+    "id": "debug-results",
     "type": "debug",
     "z": "pgvector-flow",
-    "name": "results",
+    "name": "Results",
     "active": true,
     "tosidebar": true,
     "console": false,
     "tostatus": false,
-    "complete": "payload",
-    "targetType": "msg",
+    "complete": "true",
+    "targetType": "full",
     "statusVal": "",
     "statusType": "auto",
-    "x": 760,
-    "y": 280,
+    "x": 680,
+    "y": 160,
     "wires": []
   }
 ]

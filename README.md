@@ -116,19 +116,24 @@ Administrative operations for pgvector setup and index management.
 
 ## Example Flows
 
-Three ready-to-use example flows are provided in the [examples/](examples/) directory:
+Ready-to-use example flows are provided in the [examples/](examples/) directory. All flows are tested with the included Docker environment.
 
-1. **[sample-flows.json](examples/sample-flows.json)** - **Start here!** Four separate tabs demonstrating all features:
-   - Setup: Create extension, table, and HNSW index
-   - Insert: Bulk insert articles with embeddings
-   - Search: Similarity search with cosine/L2/inner-product metrics
-   - Query: Custom SQL queries and data inspection
+### sample-flows.json - Recommended Starting Point
 
-2. **[complete-example.json](examples/complete-example.json)** - End-to-end workflow with products table
+The most thoroughly tested example with four separate tabs:
+- **Setup Database**: Create extension, table, and HNSW index
+- **Insert Embeddings**: Bulk insert articles with 384-dim vectors
+- **Similarity Search**: Find similar articles using cosine distance
+- **Custom Queries**: Run arbitrary SQL queries
 
-3. **[basic-flows.json](examples/basic-flows.json)** - Simple starter template
+**To import:** Menu → Import → select `examples/sample-flows.json`
 
-**To import:** In Node-RED, use Menu → Import and select a flow file from the examples directory.
+### Additional Examples
+
+- **[complete-example.json](examples/complete-example.json)** - Single-tab end-to-end workflow with products table
+- **[basic-flows.json](examples/basic-flows.json)** - Minimal starter template for quick prototyping
+
+See [examples/README.md](examples/README.md) for detailed usage instructions.
 
 ## Quick Start
 

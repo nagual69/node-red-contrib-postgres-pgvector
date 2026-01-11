@@ -4,17 +4,31 @@
     "type": "tab",
     "label": "Complete Example",
     "disabled": false,
-    "info": "Complete end-to-end example demonstrating all pgvector capabilities.\n\nFlow:\n1. Setup database (extension, table, index)\n2. Insert sample embeddings\n3. Perform similarity searches\n4. Run custom queries\n\nStart by deploying and clicking the 'Start Setup' inject node."
+    "info": "Complete end-to-end example demonstrating all pgvector capabilities.\n\nWorkflow:\n1. Setup database (extension, table, index)\n2. Insert sample product embeddings\n3. Perform similarity searches\n4. Run custom queries\n\nStart by deploying and clicking the setup buttons in order."
   },
   {
-    "id": "start-setup",
+    "id": "pgvector-config-complete",
+    "type": "pgvector-config",
+    "name": "PostgreSQL pgvector",
+    "host": "postgres",
+    "port": 5432,
+    "database": "vectordb",
+    "ssl": false,
+    "max": 10,
+    "credentials": {
+      "user": "nodered",
+      "password": "nodered123"
+    }
+  },
+  {
+    "id": "inject-extension",
     "type": "inject",
     "z": "complete-example-tab",
-    "name": "Start Setup",
+    "name": "1. Create Extension",
     "props": [
       {
-        "p": "step",
-        "v": "1-extension",
+        "p": "action",
+        "v": "create-extension",
         "vt": "str"
       }
     ],
@@ -22,24 +36,49 @@
     "crontab": "",
     "once": false,
     "onceDelay": 0.1,
-    "x": 100,
-    "y": 60,
-    "wires": [["setup-sequence"]]
-  },
-  {
-    "id": "setup-sequence",
-    "type": "function",
-    "z": "complete-example-tab",
-    "name": "Sequence Setup Steps",
-    "func": "// This demonstrates a setup sequence\n// In practice, you'd run these steps separately\nconst step = msg.step || \"1-extension\";\n\nswitch(step) {\n  case \"1-extension\":\n    msg.action = \"create-extension\";\n    break;\n  case \"2-table\":\n    msg.action = \"create-table\";\n    msg.table = \"products\";\n    msg.column = \"embedding\";\n    msg.dimension = 384;\n    break;\n  case \"3-index\":\n    msg.action = \"create-hnsw\";\n    msg.table = \"products\";\n    msg.column = \"embedding\";\n    msg.metric = \"cosine\";\n    break;\n}\n\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "initialize": "",
-    "finalize": "",
-    "libs": [],
-    "x": 280,
+    "x": 130,
     "y": 60,
     "wires": [["admin-complete"]]
+  },
+  {
+    "id": "inject-table",
+    "type": "inject",
+    "z": "complete-example-tab",
+    "name": "2. Create Products Table",
+    "props": [
+      {
+        "p": "topic",
+        "v": "CREATE TABLE IF NOT EXISTS products (id SERIAL PRIMARY KEY, name TEXT NOT NULL, description TEXT, price NUMERIC(10,2), category TEXT, embedding vector(384), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 150,
+    "y": 120,
+    "wires": [["query-setup"]]
+  },
+  {
+    "id": "inject-index",
+    "type": "inject",
+    "z": "complete-example-tab",
+    "name": "3. Create HNSW Index",
+    "props": [
+      {
+        "p": "topic",
+        "v": "CREATE INDEX IF NOT EXISTS products_embedding_hnsw_idx ON products USING hnsw (embedding vector_cosine_ops)",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 140,
+    "y": 180,
+    "wires": [["query-setup"]]
   },
   {
     "id": "admin-complete",
@@ -53,41 +92,21 @@
     "dimension": "",
     "indexName": "",
     "probes": 10,
-    "connection": "config-complete",
-    "x": 490,
-    "y": 60,
-    "wires": [["log-setup"]]
-  },
-  {
-    "id": "log-setup",
-    "type": "function",
-    "z": "complete-example-tab",
-    "name": "Log Status",
-    "func": "node.log(`Setup step completed: ${JSON.stringify(msg.payload)}`);\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "initialize": "",
-    "finalize": "",
-    "libs": [],
-    "x": 680,
+    "connection": "pgvector-config-complete",
+    "x": 390,
     "y": 60,
     "wires": [["debug-complete"]]
   },
   {
-    "id": "debug-complete",
-    "type": "debug",
+    "id": "query-setup",
+    "type": "pgvector-query",
     "z": "complete-example-tab",
-    "name": "",
-    "active": true,
-    "tosidebar": true,
-    "console": false,
-    "tostatus": false,
-    "complete": "false",
-    "statusVal": "",
-    "statusType": "auto",
-    "x": 850,
-    "y": 60,
-    "wires": []
+    "name": "Execute Setup Query",
+    "sql": "",
+    "connection": "pgvector-config-complete",
+    "x": 410,
+    "y": 150,
+    "wires": [["debug-complete"]]
   },
   {
     "id": "insert-products",
@@ -105,23 +124,23 @@
     "crontab": "",
     "once": false,
     "onceDelay": 0.1,
-    "x": 100,
-    "y": 140,
+    "x": 130,
+    "y": 280,
     "wires": [["generate-embeddings"]]
   },
   {
     "id": "generate-embeddings",
     "type": "function",
     "z": "complete-example-tab",
-    "name": "Generate Random Embeddings",
-    "func": "// Generate realistic product embeddings (384-dim)\nmsg.payload = msg.payload.map(product => {\n  const embedding = Array(384).fill(0).map(() => Math.random());\n  return {\n    name: product.name,\n    description: product.description,\n    price: product.price,\n    category: product.category,\n    vector: embedding\n  };\n});\nreturn msg;",
+    "name": "Pad vectors to 384 dims",
+    "func": "// Generate 384-dim vectors for products\n// In production, use real embeddings from OpenAI, etc.\nmsg.payload = msg.payload.map(product => {\n  const baseVec = [0.1, 0.2, 0.3, 0.15, 0.25];\n  while (baseVec.length < 384) {\n    baseVec.push(Math.random() * 0.1);\n  }\n  return {\n    name: product.name,\n    description: product.description,\n    price: product.price,\n    category: product.category,\n    vector: baseVec\n  };\n});\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
     "finalize": "",
     "libs": [],
-    "x": 300,
-    "y": 140,
+    "x": 370,
+    "y": 280,
     "wires": [["insert-products-node"]]
   },
   {
@@ -133,24 +152,9 @@
     "column": "embedding",
     "idColumn": "id",
     "dimension": "384",
-    "connection": "config-complete",
-    "x": 520,
-    "y": 140,
-    "wires": [["log-insert"]]
-  },
-  {
-    "id": "log-insert",
-    "type": "function",
-    "z": "complete-example-tab",
-    "name": "Log Inserted",
-    "func": "node.log(`Inserted ${msg.payload.length} products`);\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "initialize": "",
-    "finalize": "",
-    "libs": [],
-    "x": 680,
-    "y": 140,
+    "connection": "pgvector-config-complete",
+    "x": 590,
+    "y": 280,
     "wires": [["debug-complete"]]
   },
   {
@@ -161,7 +165,7 @@
     "props": [
       {
         "p": "payload",
-        "v": "{\"vector\":[0.5,0.5,0.5,0.5,0.5,0.4,0.6,0.45,0.55,0.5]}",
+        "v": "{\"vector\":[0.12,0.22,0.28,0.16,0.24]}",
         "vt": "json"
       },
       {
@@ -174,41 +178,41 @@
     "crontab": "",
     "once": false,
     "onceDelay": 0.1,
-    "x": 100,
-    "y": 220,
+    "x": 130,
+    "y": 380,
     "wires": [["pad-search-vector"]]
   },
   {
     "id": "pad-search-vector",
     "type": "function",
     "z": "complete-example-tab",
-    "name": "Pad Vector to 384 Dims",
-    "func": "const vec = msg.payload.vector;\nwhile (vec.length < 384) {\n  vec.push(Math.random());\n}\nmsg.payload = { vector: vec };\nreturn msg;",
+    "name": "Pad to 384 dims",
+    "func": "const vec = msg.payload.vector;\nwhile (vec.length < 384) {\n  vec.push(Math.random() * 0.1);\n}\nmsg.payload = { vector: vec };\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
     "finalize": "",
     "libs": [],
-    "x": 300,
-    "y": 220,
+    "x": 340,
+    "y": 380,
     "wires": [["search-products-node"]]
   },
   {
     "id": "search-products-node",
     "type": "pgvector-search",
     "z": "complete-example-tab",
-    "name": "Find Similar Products",
+    "name": "Search Similar Products",
     "table": "products",
     "column": "embedding",
     "metric": "cosine",
     "limit": 3,
     "normalize": false,
     "dimension": "384",
-    "select": "id, name, category, price, embedding <=> $1::vector as similarity",
+    "select": "id, name, category, price, embedding <=> $1::vector as distance",
     "where": "",
-    "connection": "config-complete",
+    "connection": "pgvector-config-complete",
     "x": 540,
-    "y": 220,
+    "y": 380,
     "wires": [["format-search-results"]]
   },
   {
@@ -216,58 +220,82 @@
     "type": "function",
     "z": "complete-example-tab",
     "name": "Format Results",
-    "func": "msg.payload = msg.payload.map(product => ({\n  id: product.id,\n  name: product.name,\n  category: product.category,\n  price: `$${product.price}`,\n  similarity: parseFloat(product.similarity).toFixed(4)\n}));\nreturn msg;",
+    "func": "msg.payload = msg.payload.map(product => ({\n  id: product.id,\n  name: product.name,\n  category: product.category,\n  price: `$${product.price}`,\n  distance: parseFloat(product.distance).toFixed(4)\n}));\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
     "finalize": "",
     "libs": [],
     "x": 750,
-    "y": 220,
+    "y": 380,
     "wires": [["debug-complete"]]
   },
   {
-    "id": "query-stats",
+    "id": "query-count",
     "type": "inject",
     "z": "complete-example-tab",
-    "name": "Get Database Stats",
+    "name": "Count Products",
     "props": [
       {
-        "p": "payload",
-        "v": "{\"sql\":\"SELECT COUNT(*) as total_products, array_length(embedding::real[], 1) as vector_dims FROM products LIMIT 1\"}",
-        "vt": "json"
+        "p": "topic",
+        "v": "SELECT COUNT(*) as total_products FROM products",
+        "vt": "str"
       }
     ],
     "repeat": "",
     "crontab": "",
     "once": false,
     "onceDelay": 0.1,
-    "x": 100,
-    "y": 300,
+    "x": 120,
+    "y": 480,
+    "wires": [["query-stats-node"]]
+  },
+  {
+    "id": "query-all",
+    "type": "inject",
+    "z": "complete-example-tab",
+    "name": "Select All Products",
+    "props": [
+      {
+        "p": "topic",
+        "v": "SELECT id, name, category, price FROM products LIMIT 10",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 130,
+    "y": 540,
     "wires": [["query-stats-node"]]
   },
   {
     "id": "query-stats-node",
     "type": "pgvector-query",
     "z": "complete-example-tab",
-    "name": "Query Stats",
+    "name": "Execute Query",
     "sql": "",
-    "connection": "config-complete",
-    "x": 320,
-    "y": 300,
+    "connection": "pgvector-config-complete",
+    "x": 350,
+    "y": 510,
     "wires": [["debug-complete"]]
   },
   {
-    "id": "config-complete",
-    "type": "pgvector-config",
-    "host": "postgres",
-    "port": 5432,
-    "database": "vectordb",
-    "ssl": false,
-    "max": 10,
-    "credentials": {
-      "user": "nodered",
-      "password": "nodered123"
-    }
+    "id": "debug-complete",
+    "type": "debug",
+    "z": "complete-example-tab",
+    "name": "Results",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 800,
+    "y": 280,
+    "wires": []
   }
 ]
