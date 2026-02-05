@@ -27,12 +27,12 @@ module.exports = function registerConfigNode(RED) {
 
     // Store configuration
     this.host = config.host;
-    this.port = Number(config.port) || 5432;
+    this.port = config.port != null ? Number(config.port) : 5432;
     this.database = config.database;
     this.user = this.credentials?.user;
     this.password = this.credentials?.password;
     this.ssl = config.ssl || false;
-    this.poolMax = Number(config.max) || 10;
+    this.poolMax = config.max != null ? Number(config.max) : 10;
 
     // Validation errors array
     const errors = [];
