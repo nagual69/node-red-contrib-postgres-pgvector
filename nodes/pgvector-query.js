@@ -34,6 +34,13 @@ module.exports = function registerQueryNode(RED) {
         return;
       }
 
+      // Validate credentials are configured
+      if (!pgConfig.user || !pgConfig.password) {
+        node.error('Database credentials not configured. Please edit the pgvector-config node and enter username/password.', msg);
+        done();
+        return;
+      }
+
       // Get SQL from msg or node config (msg.sql > msg.topic > config.sql)
       const sql = msg.sql || msg.topic || nodeSql;
 

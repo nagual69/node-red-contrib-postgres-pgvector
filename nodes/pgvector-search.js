@@ -47,6 +47,13 @@ module.exports = function registerSearchNode(RED) {
         return;
       }
 
+      // Validate credentials are configured
+      if (!pgConfig.user || !pgConfig.password) {
+        node.error('Database credentials not configured. Please edit the pgvector-config node and enter username/password.', msg);
+        done();
+        return;
+      }
+
       // Merge node config with message properties (msg overrides node config)
       const table = msg.table || nodeTable;
       const column = msg.column || nodeColumn;

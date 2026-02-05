@@ -25,8 +25,8 @@ module.exports = function registerConfigNode(RED) {
     this.host = config.host;
     this.port = Number(config.port) || 5432;
     this.database = config.database;
-    this.user = this.credentials.user;
-    this.password = this.credentials.password;
+    this.user = this.credentials?.user;
+    this.password = this.credentials?.password;
     this.ssl = config.ssl || false;
 
     // Create connection pool

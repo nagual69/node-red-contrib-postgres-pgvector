@@ -55,6 +55,13 @@ module.exports = function registerSchemaNode(RED) {
         return;
       }
 
+      // Validate credentials are configured
+      if (!pgConfig.user || !pgConfig.password) {
+        node.error('Database credentials not configured. Please edit the pgvector-config node and enter username/password.', msg);
+        done();
+        return;
+      }
+
       // Determine if listing tables or columns
       const table = msg.table || nodeTable;
 

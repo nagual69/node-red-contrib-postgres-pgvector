@@ -43,6 +43,13 @@ module.exports = function registerUpsertNode(RED) {
         return;
       }
 
+      // Validate credentials are configured
+      if (!pgConfig.user || !pgConfig.password) {
+        node.error('Database credentials not configured. Please edit the pgvector-config node and enter username/password.', msg);
+        done();
+        return;
+      }
+
       // Merge configuration
       const table = msg.table || nodeTable;
       const column = msg.column || nodeColumn;
