@@ -6,7 +6,15 @@
       "Bash(npm install:*)",
       "Bash(npm run test:unit:*)",
       "Bash(node -e:*)",
-      "Bash(npm pack:*)"
+      "Bash(npm pack:*)",
+      "Bash(npm view:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh auth status:*)",
+      "WebFetch(domain:docs.npmjs.com)",
+      "Bash(git tag:*)",
+      "Bash(gh release create v1.0.0 --title \"v1.0.0\" --notes \"$\\(cat <<''EOF''\n# Initial Stable Release\n\nNode-RED nodes for PostgreSQL + pgvector vector similarity operations.\n\n## Features\n\n### 7 Full-Featured Nodes\n- **pgvector-config** - Connection pooling and credentials management\n- **pgvector-admin** - Extension, table, and index management\n- **pgvector-query** - Arbitrary SQL query execution\n- **pgvector-insert** - Bulk vector insertion\n- **pgvector-upsert** - Insert or update with conflict handling\n- **pgvector-search** - Similarity search with 3 distance metrics\n- **pgvector-schema** - Database schema inspection\n\n### Vector Support\n- Multiple input formats: arrays, JSON strings, CSV, base64-encoded\n- Vector validation and dimension checking\n- Automatic normalization for cosine similarity\n\n### Distance Metrics\n- Cosine similarity \\(default\\)\n- L2 \\(Euclidean\\) distance\n- Inner Product\n\n### Index Support\n- HNSW indexes for best recall and query performance\n- IVFFlat indexes for balanced speed/accuracy\n\n## Installation\n\n```bash\nnpm install @nagual69/node-red-pgvector\n```\n\nOr search for `@nagual69/node-red-pgvector` in the Node-RED Palette Manager.\n\n## Documentation\n\n- [README]\\(README.md\\) - Full documentation\n- [Example Flows]\\(examples/\\) - Ready-to-import flows\n- [CHANGELOG]\\(CHANGELOG.md\\) - Version history\nEOF\n\\)\")"
     ]
   }
 }
