@@ -1,7 +1,7 @@
 {
   "name": "@nagual69/node-red-pgvector",
-  "version": "1.0.0",
-  "description": "Node-RED nodes for PostgreSQL + pgvector similarity search and vector operations.",
+  "version": "2.0.0",
+  "description": "Enterprise-grade Node-RED nodes for PostgreSQL + pgvector with OpenTelemetry observability, structured logging, and production-ready resilience.",
   "main": "pgvector.js",
   "license": "MIT",
   "author": "Toby Schmeling <nagual69@gmail.com>",
@@ -14,7 +14,14 @@
     "embeddings",
     "similarity",
     "ivfflat",
-    "hnsw"
+    "hnsw",
+    "opentelemetry",
+    "otel",
+    "observability",
+    "enterprise",
+    "production",
+    "monitoring",
+    "tracing"
   ],
   "homepage": "https://flows.nodered.org/node/@nagual69/node-red-pgvector",
   "files": [
@@ -46,12 +53,26 @@
   "dependencies": {
     "pg": "^8.12.0",
     "pg-format": "^1.0.4",
-    "pgvector": "^0.1.8"
+    "pgvector": "^0.1.8",
+    "pino": "^8.17.0"
   },
   "devDependencies": {
     "mocha": "^10.2.0",
+    "node-red": "^4.1.4",
+    "node-red-node-test-helper": "^0.3.4",
+    "pino-pretty": "^10.3.0",
     "sinon": "^17.0.1",
     "typescript": "^5.7.2"
+  },
+  "optionalDependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.51.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.54.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.54.0",
+    "@opentelemetry/resources": "^1.28.0",
+    "@opentelemetry/sdk-node": "^0.54.0",
+    "@opentelemetry/semantic-conventions": "^1.28.0",
+    "pino-pretty": "^10.3.0"
   },
   "node-red": {
     "version": ">=2.0.0",

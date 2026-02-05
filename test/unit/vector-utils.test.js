@@ -173,9 +173,11 @@ describe('vector-utils', function () {
       assert.strictEqual(result, '*, count');
     });
 
-    it('should quote columns with special characters', function () {
+    it('should leave complex expressions unquoted', function () {
+      // Hyphens in column names make it a non-simple identifier,
+      // so it's treated as a potential expression and left as-is
       const result = escapeSelectClause('my-col, other_col');
-      assert.strictEqual(result, '"my-col", other_col');
+      assert.strictEqual(result, 'my-col, other_col');
     });
   });
 

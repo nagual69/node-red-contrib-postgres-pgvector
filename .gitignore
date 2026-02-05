@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
-package-lock.json
-yarn.lock
+# package-lock.json should be committed for reproducible builds
+# yarn.lock should be committed if using yarn
 
 # Node-RED
 .node-red/

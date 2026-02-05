@@ -2,6 +2,21 @@
 
 Node-RED nodes for PostgreSQL + pgvector: create vector tables, insert/upsert embeddings, run similarity search (cosine, L2, inner product), and manage indexes.
 
+**Enterprise-ready** with OpenTelemetry observability, structured logging, automatic retries, and comprehensive validation.
+
+## ✨ Enterprise Features
+
+- 🔭 **OpenTelemetry** - Distributed tracing, metrics, and observability ([Setup Guide](./OTEL_SETUP.md))
+- 📊 **Structured Logging** - JSON logs with pino for production monitoring
+- 🔄 **Automatic Retries** - Exponential backoff for transient failures
+- ⏱️ **Query Timeouts** - Prevent hanging queries (default: 60s)
+- 🏥 **Health Monitoring** - Connection pool metrics and error handling
+- ✅ **Validation** - Comprehensive pre-flight checks with actionable errors
+- 🔒 **Security** - Parameterized queries, identifier escaping, credentials vault
+- 📈 **Performance** - Query duration tracking and slow query detection
+
+See [Enterprise Guide](./ENTERPRISE.md) for production deployment.
+
 ## Prerequisites
 
 - **PostgreSQL** with the [pgvector extension](https://github.com/pgvector/pgvector) installed
